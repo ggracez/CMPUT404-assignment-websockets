@@ -24,7 +24,6 @@
   </head> 
   <body bgcolor="black" height="100%" width="100%" style="overflow: hidden;"> 
     <div id="debug" style="color: white;"></div>
-    <div id="queue"></div>
     <canvas id="c" width="100%" height="100%" 
         style="-webkit-tap-highlight-color: transparent; border-radius: 2rem;"></canvas> 
     <script>
@@ -252,15 +251,9 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 
 function update() {
+    drawNextFrame();
     drawFrame();
 }
-
-function addMessage( msg ) {
-    var msgDiv = document.createElement("span");
-    msgDiv.className = "msg";
-    msgDiv.appendChild(new Text(msg));
-    queue.appendChild( msgDiv );
-};
 
 
 function wsSetup() {
@@ -275,10 +268,13 @@ function wsSetup() {
     };
     socket.onmessage = function(msg) {  
         try {
-            debug("WebSocket Recv:" + (msg.data));
+            debug("WebSocket Recv:" + msg.data);
             // DONE: What are you going to do here?
             var message = JSON.parse(msg.data);
-            addMessage(message["msg"]);
+            for (let i in message){
+                world[i] = message[i];
+                update();
+            }
         } catch (e) {
             alert("socket on message: " + e);
         }
