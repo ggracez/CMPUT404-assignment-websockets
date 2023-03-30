@@ -22,8 +22,9 @@
     "/>
     <script src="json2.js"></script>
   </head> 
-  <body bgcolor="white" height="100%" width="100%" style="overflow: hidden;"> 
-    <div id="debug"></div>
+  <body bgcolor="black" height="100%" width="100%" style="overflow: hidden;"> 
+    <div id="debug" style="color: white;"></div>
+    <div id="queue"></div>
     <canvas id="c" width="100%" height="100%" 
         style="-webkit-tap-highlight-color: transparent; border-radius: 2rem;"></canvas> 
     <script>
@@ -233,7 +234,7 @@ mouse = (function() {
 })();
 
 // Add the application specific mouse listeners!
-// TODO: Make these prettier!
+// DONE: Make these prettier!
 mouse.mousedowners.push(function(x,y,clicked,e) {
     addEntityWithoutName({'x':x,'y':y,'colour':'#FBEEA8',
                           'radius':10});
@@ -254,24 +255,30 @@ function update() {
     drawFrame();
 }
 
+function addMessage( msg ) {
+    var msgDiv = document.createElement("span");
+    msgDiv.className = "msg";
+    msgDiv.appendChild(new Text(msg));
+    queue.appendChild( msgDiv );
+};
+
 
 function wsSetup() {
     var url = "ws://"+host+"/subscribe";   
     socket = new WebSocket(url);
     socket.onopen = function() {
-        // TODO: What are you going to do here?
-        
+        // DONE: What are you going to do here?
+        debug("Socket Opened");  
     };
     socket.onerror = function(msg) {
         debug("WebSocket Error:" + msg.data);
     };
     socket.onmessage = function(msg) {  
         try {
-            debug("WebSocket Recv:" + msg.data);
-            // TODO: What are you going to do here?
+            debug("WebSocket Recv:" + (msg.data));
+            // DONE: What are you going to do here?
             var message = JSON.parse(msg.data);
             addMessage(message["msg"]);
-
         } catch (e) {
             alert("socket on message: " + e);
         }
